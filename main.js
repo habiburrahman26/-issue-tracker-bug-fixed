@@ -1,16 +1,19 @@
-document.getElementById('issueInputForm').addEventListener('submit', submitIssue);
+document
+  .getElementById('issueInputForm')
+  .addEventListener('submit', submitIssue);
 
 function submitIssue(e) {
-  const getInputValue = id => document.getElementById(id).value;
+  const getInputValue = (id) => document.getElementById(id).value;
   const description = getInputValue('issueDescription');
   const severity = getInputValue('issueSeverity');
   const assignedTo = getInputValue('issueAssignedTo');
-  const id = Math.floor(Math.random()*100000000) + '';
+
+  const id = Math.floor(Math.random() * 100000000) + '';
   const status = 'Open';
 
   const issue = { id, description, severity, assignedTo, status };
   let issues = [];
-  if (localStorage.getItem('issues')){
+  if (localStorage.getItem('issues')) {
     issues = JSON.parse(localStorage.getItem('issues'));
   }
   issues.push(issue);
@@ -21,19 +24,22 @@ function submitIssue(e) {
   e.preventDefault();
 }
 
-const closeIssue = id => {
+const closeIssue = (id) => {
   const issues = JSON.parse(localStorage.getItem('issues'));
-  const currentIssue = issues.find(issue => issue.id === id);
+  const currentIssue = issues.find((issue) => issue.id === id);
   currentIssue.status = 'Closed';
   localStorage.setItem('issues', JSON.stringify(issues));
   fetchIssues();
-}
+};
 
-const deleteIssue = id => {
+const deleteIssue = (id) => {
+  console.log(id);
   const issues = JSON.parse(localStorage.getItem('issues'));
-  const remainingIssues = issues.filter( issue.id !== id )
+  // object id is string but parameter recived id is int. so convert object id to int 
+  const remainingIssues = issues.filter((issue) => +issue.id !== id);
   localStorage.setItem('issues', JSON.stringify(remainingIssues));
-}
+  fetchIssues();
+};
 
 const fetchIssues = () => {
   const issues = JSON.parse(localStorage.getItem('issues'));
@@ -41,9 +47,9 @@ const fetchIssues = () => {
   issuesList.innerHTML = '';
 
   for (var i = 0; i < issues.length; i++) {
-    const {id, description, severity, assignedTo, status} = issues[i];
+    const { id, description, severity, assignedTo, status } = issues[i];
 
-    issuesList.innerHTML +=   `<div class="well">
+    issuesList.innerHTML += `<div class="well">
                               <h6>Issue ID: ${id} </h6>
                               <p><span class="label label-info"> ${status} </span></p>
                               <h3> ${description} </h3>
@@ -53,4 +59,4 @@ const fetchIssues = () => {
                               <a href="#" onclick="deleteIssue(${id})" class="btn btn-danger">Delete</a>
                               </div>`;
   }
-}
+};
